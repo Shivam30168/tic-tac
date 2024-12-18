@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="tic-tac-toe.png" type="image/x-icon">
+        <title>Tic Tac Toe Game</title>
+        <meta name="description"
+            content="Play Tic Tac Toe with friends or challenge yourself against a tough AI opponent. Enjoy exciting 2-player matches or test your strategy against a challenging computer for a truly competitive experience!">
+        <meta
+            keywords="Tic Tac Toe, 2-player game, play with computer, challenging AI, multiplayer, strategy game, classic board game, Tic Tac Toe online, best Tic Tac Toe, tough AI opponent, fun Tic Tac Toe">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+            }
+
+
+            .headerbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: #333;
+                color: white;
+                padding: 10px 20px;
+                font-size: 24px;
+            }
+
+            .logo {
+                font-size: 28px;
+                font-weight: bold;
+                color: #4CAF50;
+                letter-spacing: 2px;
+            }
+
+            #exitBtn {
+                background-color: #f44336;
+                color: white;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            #exitBtn:hover {
+                background-color: #e53935;
+            }
+
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                min-height: 90vh;
+                padding: 20px;
+            }
+
+            h1 {
+                color: #333;
+                margin-bottom: 20px;
+            }
+
+            .game-options {
+                margin-bottom: 20px;
+            }
+
+            .game-btn {
+                background-color: #4CAF50;
+                color: white;
+                padding: 15px 25px;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+                margin: 10px;
+                border-radius: 5px;
+            }
+
+            .game-btn:hover {
+                background-color: #45a049;
+            }
+
+            .game-board {
+                display: grid;
+                grid-template-columns: repeat(3, 75px);
+                grid-template-rows: repeat(3, 75px);
+                gap: 5px;
+
+            }
+
+            .game-board button {
+                width: 70px;
+                height: 70px;
+                font-size: 32px;
+                background-color: #fff;
+                border: 2px solid #ddd;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s;
+            }
+
+            .game-board button:hover {
+                background-color: #f1f1f1;
+            }
+
+            .game-board button:disabled {
+                background-color: #ddd;
+                cursor: not-allowed;
+            }
+
+            .scoreboard {
+                margin-top: 20px;
+                font-size: 18px;
+            }
+
+            .scoreboard span {
+                font-weight: bold;
+                color: #333;
+            }
+
+            .input-names {
+                margin-top: 20px;
+            }
+
+            input[type="text"] {
+                padding: 8px;
+                margin-right: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 150px;
+            }
+
+            .reset-btn {
+                background-color: #ff6347;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+                margin-top: 20px;
+                border-radius: 5px;
+            }
+
+            .reset-btn:hover {
+                background-color: #f44336;
+            }
+
+            .message {
+                font-size: 20px;
+                font-weight: bold;
+                margin-top: 20px;
+            }
+
+
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .modal-content {
+                background-color: white;
+                padding: 20px;
+                border-radius: 5px;
+                text-align: center;
+                min-width: 300px;
+            }
+
+            .modal-button {
+                background-color: #4CAF50;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+
+            .modal-button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <div class="headerbar">
+            <div class="logo">Tic Tac Toe</div>
+            <button id="exitBtn" onclick="exitGame()" style="display:none;">Exit</button>
+        </div>
+
+        <div class="container">
+            <h1>Tic Tac Toe Game</h1>
+
+            <div class="game-options" id="gameOptions">
+                <button class="game-btn" onclick="startGame('player')">2 Player Game</button>
+                <button class="game-btn" onclick="startGame('computer')">Play with Computer</button>
+            </div>
+
+            <div class="input-names" id="inputNames" style="display:none;">
+                <input type="text" id="player1Name" placeholder="Enter Player 1 Name" />
+                <input type="text" id="player2Name" placeholder="Enter Player 2 Name" />
+                <button class="game-btn" onclick="startMatch()">Start Game</button>
+            </div>
+
+            <div class="game-board" id="gameBoard" style="display:none;">
+                <button id="cell0" onclick="makeMove(0)"></button>
+                <button id="cell1" onclick="makeMove(1)"></button>
+                <button id="cell2" onclick="makeMove(2)"></button>
+                <button id="cell3" onclick="makeMove(3)"></button>
+                <button id="cell4" onclick="makeMove(4)"></button>
+                <button id="cell5" onclick="makeMove(5)"></button>
+                <button id="cell6" onclick="makeMove(6)"></button>
+                <button id="cell7" onclick="makeMove(7)"></button>
+                <button id="cell8" onclick="makeMove(8)"></button>
+            </div>
+
+            <div class="scoreboard" id="scoreboard" style="display:none;">
+                <p><span id="player1NameLabel"></span> (<span id="player1Symbol">X</span>): <span
+                        id="player1Score">0</span> Wins</p>
+                <p><span id="player2NameLabel"></span> (<span id="player2Symbol">O</span>): <span
+                        id="player2Score">0</span> Wins</p>
+            </div>
+
+            <div class="message" id="message" style="display:none;"></div>
+
+            <button class="reset-btn" id="resetBtn" onclick="resetGame()" style="display:none;">Reset Game</button>
+
+
+            <div class="modal" id="winnerModal">
+                <div class="modal-content">
+                    <h2 id="winnerMessage"></h2>
+                    <button class="modal-button" onclick="closeModal()">OK</button>
+                </div>
+            </div>
+
+
+            <div class="modal" id="drawModal">
+                <div class="modal-content">
+                    <h2>It's a Draw!</h2>
+                    <button class="modal-button" onclick="restartGame()">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let currentPlayer = 'X';
+            let board = Array( 9 ).fill( null );
+            let player1Score = 0;
+            let player2Score = 0;
+            let gameType = '';
+            let player1Name = '';
+            let player2Name = '';
+            let gameOver = false;
+
+            function startGame( type ) {
+                gameType = type;
+                document.getElementById( 'gameOptions' ).style.display = 'none';
+
+                if ( gameType === 'computer' ) {
+                    document.getElementById( 'gameBoard' ).style.display = 'grid';
+                    document.getElementById( 'scoreboard' ).style.display = 'block';
+                    document.getElementById( 'exitBtn' ).style.display = 'block';
+                    document.getElementById( 'player1NameLabel' ).textContent = 'Player';
+                    document.getElementById( 'player2NameLabel' ).textContent = 'Computer';
+                    startMatch();
+                } else {
+                    document.getElementById( 'inputNames' ).style.display = 'block';
+                }
+            }
+
+            function startMatch() {
+                if ( gameType === 'player' ) {
+                    player1Name = document.getElementById( 'player1Name' ).value || 'Player 1';
+                    player2Name = document.getElementById( 'player2Name' ).value || 'Player 2';
+                    sessionStorage.setItem( 'player1Name', player1Name );
+                    sessionStorage.setItem( 'player2Name', player2Name );
+
+                    document.getElementById( 'inputNames' ).style.display = 'none';
+                    document.getElementById( 'gameBoard' ).style.display = 'grid';
+                    document.getElementById( 'scoreboard' ).style.display = 'block';
+                    document.getElementById( 'player1NameLabel' ).textContent = player1Name;
+                    document.getElementById( 'player2NameLabel' ).textContent = player2Name;
+                }
+                updateScoreboard();
+                document.getElementById( 'exitBtn' ).style.display = 'block';
+            }
+
+            function makeMove( cell ) {
+                if ( board[ cell ] !== null || gameOver ) return;
+                board[ cell ] = currentPlayer;
+                document.getElementById( 'cell' + cell ).textContent = currentPlayer;
+
+                if ( checkWinner( currentPlayer ) ) {
+                    setTimeout( () => {
+                        displayWinner( currentPlayer === 'X' ? ( gameType === 'player' ? player1Name : 'Player' ) : ( gameType === 'player' ? player2Name : 'Computer' ) );
+                        updateScores();
+                        resetGame();
+                    }, 100 );
+                    return;
+                }
+
+                if ( board.every( cell => cell !== null ) ) {
+                    setTimeout( () => {
+                        displayDraw();
+                        resetGame();
+                    }, 100 );
+                    return;
+                }
+
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+
+                if ( gameType === 'computer' && currentPlayer === 'O' ) {
+                    disableBoard( true );
+                    setTimeout( computerMove, 1000 );
+                }
+            }
+
+            function computerMove() {
+                const emptyCells = board.map( ( val, index ) => val === null ? index : null ).filter( val => val !== null );
+                const bestMove = findBestMove( emptyCells );
+                makeMove( bestMove );
+                disableBoard( false );
+            }
+
+            function findBestMove( emptyCells ) {
+                const winningCombination = [
+                    [ 0, 1, 2 ],
+                    [ 3, 4, 5 ],
+                    [ 6, 7, 8 ],
+                    [ 0, 3, 6 ],
+                    [ 1, 4, 7 ],
+                    [ 2, 5, 8 ],
+                    [ 0, 4, 8 ],
+                    [ 2, 4, 6 ]
+                ];
+
+                for ( let combo of winningCombination ) {
+                    const [ a, b, c ] = combo;
+                    if ( board[ a ] === board[ b ] && board[ a ] === 'O' && board[ c ] === null ) return c;
+                    if ( board[ b ] === board[ c ] && board[ b ] === 'O' && board[ a ] === null ) return a;
+                    if ( board[ a ] === board[ c ] && board[ a ] === 'O' && board[ b ] === null ) return b;
+                }
+
+                for ( let combo of winningCombination ) {
+                    const [ a, b, c ] = combo;
+                    if ( board[ a ] === board[ b ] && board[ a ] === 'X' && board[ c ] === null ) return c;
+                    if ( board[ b ] === board[ c ] && board[ b ] === 'X' && board[ a ] === null ) return a;
+                    if ( board[ a ] === board[ c ] && board[ a ] === 'X' && board[ b ] === null ) return b;
+                }
+
+                return emptyCells[ Math.floor( Math.random() * emptyCells.length ) ];
+            }
+
+            function checkWinner( player ) {
+                const winningCombination = [
+                    [ 0, 1, 2 ],
+                    [ 3, 4, 5 ],
+                    [ 6, 7, 8 ],
+                    [ 0, 3, 6 ],
+                    [ 1, 4, 7 ],
+                    [ 2, 5, 8 ],
+                    [ 0, 4, 8 ],
+                    [ 2, 4, 6 ]
+                ];
+
+                return winningCombination.some( combination =>
+                    combination.every( index => board[ index ] === player )
+                );
+            }
+
+            function displayWinner( winner ) {
+                document.getElementById( 'winnerMessage' ).textContent = winner + ' Wins!';
+                document.getElementById( 'winnerModal' ).style.display = 'flex';
+            }
+
+            function displayDraw() {
+                document.getElementById( 'drawModal' ).style.display = 'flex';
+            }
+
+            function closeModal() {
+                document.getElementById( 'winnerModal' ).style.display = 'none';
+                document.getElementById( 'drawModal' ).style.display = 'none';
+            }
+
+            function restartGame() {
+                document.getElementById( 'drawModal' ).style.display = 'none';
+                resetGame();
+            }
+
+            function updateScores() {
+                if ( currentPlayer === 'X' ) {
+                    player1Score++;
+                } else {
+                    player2Score++;
+                }
+
+                updateScoreboard();
+            }
+
+            function updateScoreboard() {
+                document.getElementById( 'player1Score' ).textContent = player1Score;
+                document.getElementById( 'player2Score' ).textContent = player2Score;
+            }
+
+            function disableBoard( disable ) {
+                for ( let i = 0; i < 9; i++ ) {
+                    document.getElementById( 'cell' + i ).disabled = disable;
+                }
+            }
+
+            function resetGame() {
+                board.fill( null );
+                for ( let i = 0; i < 9; i++ ) {
+                    document.getElementById( 'cell' + i ).textContent = '';
+                }
+                currentPlayer = 'X';
+                gameOver = false;
+                disableBoard( false );
+            }
+
+            function exitGame() {
+                sessionStorage.clear();
+                location.reload();
+            }
+        </script>
+    </body>
+
+</html>
